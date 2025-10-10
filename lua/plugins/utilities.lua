@@ -36,7 +36,7 @@ return {
           Snacks.toggle.diagnostics():map("<leader>ud")
           Snacks.toggle.line_number():map("<leader>ul")
           Snacks.toggle.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 }):map(
-          "<leader>uc")
+            "<leader>uc")
           Snacks.toggle.treesitter():map("<leader>uT")
           Snacks.toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>ub")
           Snacks.toggle.inlay_hints():map("<leader>uh")
@@ -53,19 +53,24 @@ return {
     opts = {
       -- Smear cursor when switching buffers or windows
       smear_between_buffers = true,
-      
+
       -- Smear cursor when moving within line or to neighbor lines
       smear_between_neighbor_lines = true,
-      
+
       -- Draw the smear in buffer space instead of screen space when scrolling
       scroll_buffer_space = true,
-      
+
       -- Set to true if your font supports legacy computing symbols (block unicode symbols)
       -- Smears will blend better on all backgrounds
       legacy_computing_symbols_support = false,
-      
+
       -- Smear cursor in insert mode
       smear_insert_mode = true,
     },
+  },
+
+  {
+    "editorconfig/editorconfig-vim",
+    lazy = false,
   },
 }
