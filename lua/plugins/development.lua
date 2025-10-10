@@ -73,4 +73,12 @@ return {
       return require "configs.null-ls"
     end,
   },
+
+  {
+    "f-person/git-blame.nvim",
+    event = "VeryLazy",
+    config = function()
+      return require "configs.git-blame"
+    end,
+  },
 }
