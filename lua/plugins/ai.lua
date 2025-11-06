@@ -28,63 +28,172 @@ return {
   },
 
   {
-    "yetone/avante.nvim",
-    build = "make",
-    event = "VeryLazy",
-    lazy = false,
-    version = false,
-    ---@module 'avante'
-    ---@type avante.Config
-    opts = function()
-      local function load_env()
-        local env_file = vim.fn.expand("~/.config/nvim/.env")
-        if vim.fn.filereadable(env_file) == 1 then
-          local lines = vim.fn.readfile(env_file)
-          for _, line in ipairs(lines) do
-            if line:match("^%s*AVANTE_OPENAI_API_KEY%s*=") then
-              local key = line:match("AVANTE_OPENAI_API_KEY%s*=%s*(.+)")
-              if key then
-                vim.env.OPENAI_API_KEY = key
-              end
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "main",
+    cmd = "CopilotChat",
+    keys = {
+      {
+        "<c-s>",
+        "<CR>",
+        ft = "copilot-chat",
+        desc = "Submit Prompt",
+        remap = true,
+      },
+      {
+        "<leader>a",
+        "",
+        desc = "+ai",
+        mode = {
+          "n",
+          "v",
+        },
+      },
+      {
+        "<leader>aa",
+        function()
+          return require("CopilotChat").toggle()
+        end,
+        desc = "Toggle (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>aX",
+        function()
+          return require("CopilotChat").reset()
+        end,
+        desc = "Clear (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>ai",
+        function()
+          local input = vim.fn.input "Quick Chat: "
+          if input ~= "" then
+            require("CopilotChat").ask(input)
+          end
+        end,
+        desc = "Quick Chat (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>ax",
+        "<CMD>CopilotChatExplain<CR>",
+        desc = "Explain (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>ar",
+        "<CMD>CopilotChatReview<CR>",
+        desc = "Review (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>af",
+        "<CMD>CopilotChatFix<CR>",
+        desc = "Fix (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>ao",
+        "<CMD>CopilotChatOptimize<CR>",
+        desc = "Optimize (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>aD",
+        "<CMD>CopilotChatDocs<CR>",
+        desc = "Doc (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>at",
+        "<CMD>CopilotChatTests<CR>",
+        desc = "Generate Tests (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<A-c>",
+        "<CMD>CopilotChatToggle<CR>",
+        desc = "Toggle (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<A-m>",
+        "<CMD>CopilotChatToggle<CR>",
+        desc = "Toggle (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>an",
+        function()
+          local buffers = vim.api.nvim_list_bufs()
+          local filenames = {}
+          for _, buf in ipairs(buffers) do
+            if vim.api.nvim_buf_is_loaded(buf) then
+              local filename = vim.api.nvim_buf_get_name(buf)
+              table.insert(filenames, "> #file:" .. filename)
             end
           end
-        end
-      end
-
-      load_env()
-
-      return {
-        instructions_file = "avante.md",
-        provider = "copilot",
-        providers = {
-          -- auto_suggestions_provider = "copilot",
-          copilot = {
-            enabled = true,
-            model = "claude-sonnet-4"
-          },
-        },
-      }
-    end,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      --- The below dependencies are optional,
-      "nvim-mini/mini.pick",           -- for file_selector provider mini.pick
-      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-      "hrsh7th/nvim-cmp",              -- autocompletion for avante commands and mentions
-      "ibhagwan/fzf-lua",              -- for file_selector provider fzf
-      "stevearc/dressing.nvim",        -- for input provider dressing
-      "folke/snacks.nvim",             -- for input provider snacks
-      "nvim-tree/nvim-web-devicons",   -- or echasnovski/mini.icons
-      "zbirenbaum/copilot.lua",        -- for providers='copilot'
-      {
-        -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { "markdown", "Avante" },
-        },
-        ft = { "markdown", "Avante" },
+          local prompt = table.concat(filenames, "\n")
+          vim.fn.setreg("+", prompt)
+          vim.notify(
+            "Files added to clipboard: " .. table.concat(filenames, ", "),
+            vim.log.levels.INFO
+          )
+        end,
+        desc = "Include Buffers in Prompt",
+        mode = { "n", "v" },
       },
     },
+    config = function(_, opts)
+      local chat = require "CopilotChat"
+
+      opts.chat_autocomplete = true
+
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = "copilot-chat",
+        callback = function()
+          vim.opt_local.relativenumber = false
+          vim.opt_local.number = false
+        end,
+      })
+
+      opts.mappings = {
+        complete = {
+          detail = "Use @<Tab> or /<Tab> for options.",
+          insert = "<Tab>",
+        },
+        close = {
+          normal = "q",
+          insert = "<C-c>",
+        },
+        reset = {
+          normal = "<C-c>",
+          insert = "",
+        },
+        submit_prompt = {
+          normal = "<CR>",
+          insert = "<C-m>",
+        },
+        accept_diff = {
+          normal = "<C-y>",
+          insert = "<C-y>",
+        },
+        yank_diff = {
+          normal = "gy",
+        },
+        show_diff = {
+          normal = "gd",
+        },
+        show_info = {
+          normal = "gp",
+        },
+        show_context = {
+          normal = "gs",
+        },
+      }
+
+      chat.setup(opts)
+    end,
   },
 }
