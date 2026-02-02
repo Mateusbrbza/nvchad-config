@@ -21,3 +21,6 @@ vim.lsp.config.gopls = vim.tbl_deep_extend("force", require "configs.gopls", {
   on_init = nvlsp.on_init,
   capabilities = nvlsp.capabilities,
 })
+
+-- Enable LSP servers
+vim.lsp.enable({ "ts_ls", "eslint", "tailwindcss", "html", "gopls" })
