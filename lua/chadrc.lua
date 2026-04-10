@@ -15,6 +15,19 @@ M.base46 = {
 }
 
 M.ui = {
+  statusline = {
+    theme = "default", -- default / vscode / vscode_colored / minimal
+    -- separator_style: "default" | "round" | "block" | "arrow" | "none"
+    separator_style = "block",
+    -- order: rearrange or remove modules. Available:
+    -- "mode", "file", "git", "%=", "lsp_msg", "%=", "diagnostics", "lsp", "cwd", "cursor"
+    -- order = { "mode", "file", "git", "%=", "lsp_msg", "%=", "diagnostics", "lsp", "cwd", "cursor" },
+    -- modules: override individual statusline segments with custom functions
+    -- modules = {
+    --   cursor = function() return " %l:%c " end,
+    -- },
+  },
+
   telescope = { style = "bordered" }, -- borderless / bordered
 
   cheatsheet = {
