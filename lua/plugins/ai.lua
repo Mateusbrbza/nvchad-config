@@ -31,6 +31,11 @@ return {
     "coder/claudecode.nvim",
     dependencies = { "folke/snacks.nvim" },
     lazy = false,
-    config = true,
+    opts = {
+      window = {
+        width = 0.2,
+        position = "right",
+      },
+    },
   }
 }
