@@ -32,9 +32,9 @@ return {
     dependencies = { "folke/snacks.nvim" },
     lazy = false,
     opts = {
-      window = {
-        width = 0.2,
-        position = "right",
+      terminal = {
+        split_side = "right",
+        split_width_percentage = 0.22,
       },
     },
   }
